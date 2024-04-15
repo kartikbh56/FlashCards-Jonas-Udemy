@@ -1,61 +1,54 @@
-import "./styles.css";
 import { useState } from "react";
-
-export default function App() {
+function App() {
   return (
-    <div className="App">
-      <FlashCards />
-    </div>
+    <>
+      <h1>Date Counter</h1>
+      <Counter />
+    </>
   );
 }
 
-const questions = [
-  {
-    id: 3457,
-    question: "What language is React based on?",
-    answer: "JavaScript"
-  },
-  {
-    id: 7336,
-    question: "What are the building blocks of React apps?",
-    answer: "Components"
-  },
-  {
-    id: 8832,
-    question: "What's the name of the syntax we use to describe a UI in React?",
-    answer: "JSX"
-  },
-  {
-    id: 1297,
-    question: "How to pass data from parent to child components?",
-    answer: "Props"
-  },
-  {
-    id: 9103,
-    question: "How to give components memory?",
-    answer: "useState hook"
-  },
-  {
-    id: 2002,
-    question:
-      "What do we call an input element that is completely synchronised with state?",
-    answer: "Controlled element"
+function Counter() {
+  const [steps, setSteps] = useState(1);
+  const [count, setCount] = useState(0);
+  const today = new Date()
+  function getDateAtCount(count) {
+    const now = new Date()
+    now.setDate(now.getDate()+count)
+    return now
   }
-];
-
-function FlashCards() {
-  const [activeCardId, setActiveCardId] = useState({})
   return (
-    <div className='flashcards'>
-      {questions.map(card =>
-        card.id === activeCardId ?
-          <div className='selected' key={card.id} onClick={() => {
-            setActiveCardId('')
-          }}><p>{card.answer}</p></div> :
-          <div key={card.id} onClick={() => {
-            setActiveCardId(card.id)
-          }}><p>{card.question}</p></div>
-      )}
-    </div>
-  )
+    <>
+      <input
+        type="range"
+        min="1"
+        max="10"
+        onChange={(e) => {
+          setSteps(Number(e.target.value));
+        }}
+        value={steps}
+      />
+      <div>Steps : {steps}</div>
+      <div>
+        <button onClick={() => {
+          setCount(count=>count-steps)
+        }}>-</button>
+        <input type="number" value={count} onChange={(e) => setCount(Number(e.target.value))} />
+        <button onClick={() => {
+          setCount(count=>count+steps)
+        }}>+</button>
+      </div>
+      <div>
+        {today.toLocaleDateString() === getDateAtCount(count).toLocaleDateString() ? <h4>Today is {getDateAtCount(count).toDateString()}</h4> :
+          <h4>{Math.abs(count)} days {today > getDateAtCount(count) ? 'ago was' : 'from today is'} {getDateAtCount(count).toDateString()}</h4>}
+      </div>
+      {count !== 0 &&
+        <button onClick={() => {
+          setCount(0)
+        }}>Reset</button>
+      }
+    </>
+  );
 }
+
+export default App;
